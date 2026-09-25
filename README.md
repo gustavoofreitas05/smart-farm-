@@ -198,6 +198,6 @@ cultivos):
 
 ```
 # AI assistance: Claude (Anthropic) foi usado para ajudar a estruturar o
-# projeto, gerar o código das rotas Flask, templates, schema do banco de
+# projeto, auxiliar e corrigir o código das rotas Flask, templates, schema do banco de
 # dados, validações, testes automatizados e revisar a implementação.
 ```
