@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Smart Farm{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="brand">🌱 Smart <span>Farm</span></div>
+            <nav>
+                <a href="{{ url_for('index') }}" class="{{ 'active' if request.endpoint == 'index' }}">Dashboard</a>
+                <a href="{{ url_for('animals_index') }}" class="{{ 'active' if request.endpoint and request.endpoint.startswith('animals') }}">Animais</a>
+                <a href="{{ url_for('production_index') }}" class="{{ 'active' if request.endpoint and request.endpoint.startswith('production') }}">Produção</a>
+                <a href="{{ url_for('expenses_index') }}" class="{{ 'active' if request.endpoint and request.endpoint.startswith('expenses') }}">Despesas</a>
+                <a href="{{ url_for('inventory_index') }}" class="{{ 'active' if request.endpoint and request.endpoint.startswith('inventory') }}">Estoque</a>
+                <a href="{{ url_for('crops_index') }}" class="{{ 'active' if request.endpoint and request.endpoint.startswith('crops') }}">Cultivos</a>
+            </nav>
+            {% if session.get('user_id') %}
+            <div class="user-box">
+                Logado como <strong>{{ session.get('username') }}</strong>
+                <form action="{{ url_for('logout') }}" method="get">
+                    <button type="submit">Sair</button>
+                </form>
+            </div>
+            {% endif %}
+        </aside>
+        <main class="main">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</body>
+</html>

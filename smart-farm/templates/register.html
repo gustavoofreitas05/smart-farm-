@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Criar conta - Smart Farm</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="auth-shell">
+        <div class="auth-card">
+            <div class="brand">🌱 Smart <span>Farm</span></div>
+            <p class="subtitle">Crie sua conta para começar a gerenciar sua propriedade.</p>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="post" action="{{ url_for('register') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="field">
+                    <label for="username">Usuário</label>
+                    <input type="text" id="username" name="username" autofocus required>
+                </div>
+                <div class="field">
+                    <label for="password">Senha</label>
+                    <input type="password" id="password" name="password" required minlength="6">
+                </div>
+                <div class="field">
+                    <label for="confirmation">Confirmar senha</label>
+                    <input type="password" id="confirmation" name="confirmation" required minlength="6">
+                </div>
+                <button type="submit" class="btn">Criar conta</button>
+            </form>
+            <div class="switch">
+                Já tem conta? <a href="{{ url_for('login') }}">Entrar</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

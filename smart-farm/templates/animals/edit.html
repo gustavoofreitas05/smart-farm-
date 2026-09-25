@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+{% block title %}Editar animal - Smart Farm{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Editar animal</h1>
+</div>
+
+<div class="card form-card">
+    <form method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="field">
+            <label for="name">Nome / identificação</label>
+            <input type="text" id="name" name="name" value="{{ animal.name }}" required>
+        </div>
+        <div class="field-row">
+            <div class="field">
+                <label for="species">Espécie</label>
+                <input type="text" id="species" name="species" value="{{ animal.species }}" required>
+            </div>
+            <div class="field">
+                <label for="breed">Raça</label>
+                <input type="text" id="breed" name="breed" value="{{ animal.breed or '' }}">
+            </div>
+        </div>
+        <div class="field-row">
+            <div class="field">
+                <label for="sex">Sexo</label>
+                <select id="sex" name="sex">
+                    <option value="" {{ 'selected' if not animal.sex }}>—</option>
+                    <option value="Macho" {{ 'selected' if animal.sex == 'Macho' }}>Macho</option>
+                    <option value="Fêmea" {{ 'selected' if animal.sex == 'Fêmea' }}>Fêmea</option>
+                </select>
+            </div>
+            <div class="field">
+                <label for="quantity">Quantidade</label>
+                <input type="number" id="quantity" name="quantity" min="1" value="{{ animal.quantity }}" required>
+            </div>
+        </div>
+        <div class="field">
+            <label for="birth_date">Data de nascimento</label>
+            <input type="date" id="birth_date" name="birth_date" value="{{ animal.birth_date or '' }}">
+        </div>
+        <div class="field">
+            <label for="notes">Observações</label>
+            <textarea id="notes" name="notes" rows="3">{{ animal.notes or '' }}</textarea>
+        </div>
+        <button type="submit" class="btn">Salvar alterações</button>
+        <a href="{{ url_for('animals_index') }}" class="btn secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

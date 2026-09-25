@@ -1,0 +1,179 @@
+{% extends "layout.html" %}
+{% block title %}Dashboard - Smart Farm{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Dashboard</h1>
+</div>
+
+<div class="stat-grid">
+    <div class="stat-card">
+        <div class="label">Animais</div>
+        <div class="value">{{ total_animals }}</div>
+    </div>
+    <div class="stat-card wheat">
+        <div class="label">Produção (7 dias)</div>
+        <div class="value">{{ production_week }}</div>
+    </div>
+    <div class="stat-card bark">
+        <div class="label">Gastos este mês</div>
+        <div class="value">{{ expenses_month | brl }}</div>
+        {% if expenses_change_pct is not none %}
+        <div style="font-size:0.78rem; margin-top:4px; color: {{ '#A6432F' if expenses_change_pct > 0 else '#2E5039' }};">
+            {{ '▲' if expenses_change_pct > 0 else '▼' }} {{ expenses_change_pct | abs }}% vs. mês anterior
+        </div>
+        {% endif %}
+    </div>
+    <div class="stat-card">
+        <div class="label">Cultivos ativos</div>
+        <div class="value">{{ active_crops | length }}</div>
+    </div>
+    <div class="stat-card {{ 'danger' if low_stock else '' }}">
+        <div class="label">Itens com estoque baixo</div>
+        <div class="value">{{ low_stock | length }}</div>
+    </div>
+</div>
+
+<div class="two-col">
+    <div class="card">
+        <h3>Produção nos últimos 7 dias</h3>
+        <canvas id="productionChart" height="130"></canvas>
+    </div>
+    <div class="card">
+        <h3>Gastos por categoria (mês)</h3>
+        {% if expenses_by_category %}
+        <table>
+            <tbody>
+                {% for row in expenses_by_category %}
+                <tr>
+                    <td>{{ row.category }}</td>
+                    <td style="text-align:right; font-weight:600;">{{ row.total | brl }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="empty-state">Nenhuma despesa registrada este mês.</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="two-col">
+    <div class="card">
+        <h3>Gastos nos últimos 6 meses</h3>
+        <canvas id="expenseTrendChart" height="130"></canvas>
+    </div>
+    <div class="card">
+        <h3>O que a fazenda mais produziu (30 dias)</h3>
+        {% if production_by_type %}
+        <canvas id="productionByTypeChart" height="130"></canvas>
+        {% else %}
+        <p class="empty-state">Nenhuma produção registrada nos últimos 30 dias.</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="two-col">
+    <div class="card">
+        <h3>⚠ Estoque baixo</h3>
+        {% if low_stock %}
+        <table>
+            <thead>
+                <tr><th>Item</th><th>Quantidade</th><th>Mínimo</th></tr>
+            </thead>
+            <tbody>
+                {% for item in low_stock %}
+                <tr>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.quantity }} {{ item.unit }}</td>
+                    <td>{{ item.minimum_quantity }} {{ item.unit }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="empty-state">Nenhum item abaixo do mínimo. 👍</p>
+        {% endif %}
+    </div>
+    <div class="card">
+        <h3>🌱 Cultivos ativos</h3>
+        {% if active_crops %}
+        <table>
+            <thead>
+                <tr><th>Nome</th><th>Previsão de colheita</th></tr>
+            </thead>
+            <tbody>
+                {% for crop in active_crops %}
+                <tr>
+                    <td>{{ crop.name }}</td>
+                    <td>{{ crop.expected_harvest or '—' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="empty-state">Nenhum cultivo ativo no momento.</p>
+        {% endif %}
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script>
+    new Chart(document.getElementById('productionChart'), {
+        type: 'line',
+        data: {
+            labels: {{ chart_labels | tojson }},
+            datasets: [{
+                label: 'Produção',
+                data: {{ chart_values | tojson }},
+                borderColor: '#3F6C4F',
+                backgroundColor: 'rgba(63, 108, 79, 0.15)',
+                tension: 0.35,
+                fill: true,
+                pointRadius: 3
+            }]
+        },
+        options: {
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+
+    new Chart(document.getElementById('expenseTrendChart'), {
+        type: 'bar',
+        data: {
+            labels: {{ expense_trend_labels | tojson }},
+            datasets: [{
+                label: 'Gastos',
+                data: {{ expense_trend_values | tojson }},
+                backgroundColor: '#8B5E3C',
+                borderRadius: 4
+            }]
+        },
+        options: {
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+
+    {% if production_by_type %}
+    new Chart(document.getElementById('productionByTypeChart'), {
+        type: 'bar',
+        data: {
+            labels: {{ production_by_type | map(attribute='type') | list | tojson }},
+            datasets: [{
+                label: 'Quantidade',
+                data: {{ production_by_type | map(attribute='total') | list | tojson }},
+                backgroundColor: '#C99A3E',
+                borderRadius: 4
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            plugins: { legend: { display: false } },
+            scales: { x: { beginAtZero: true } }
+        }
+    });
+    {% endif %}
+</script>
+{% endblock %}

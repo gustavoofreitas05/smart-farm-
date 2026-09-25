@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+{% block title %}Animais - Smart Farm{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Animais</h1>
+    <a href="{{ url_for('animals_create') }}" class="btn">+ Novo animal</a>
+</div>
+
+<div class="card">
+    {% if animals %}
+    <table>
+        <thead>
+            <tr>
+                <th>Nome</th><th>Espécie</th><th>Raça</th><th>Sexo</th><th>Qtd.</th><th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for animal in animals %}
+            <tr>
+                <td>{{ animal.name }}</td>
+                <td>{{ animal.species }}</td>
+                <td>{{ animal.breed or '—' }}</td>
+                <td>{{ animal.sex or '—' }}</td>
+                <td>{{ animal.quantity }}</td>
+                <td>
+                    <a href="{{ url_for('animals_edit', animal_id=animal.id) }}" class="btn secondary small">Editar</a>
+                    <form action="{{ url_for('animals_delete', animal_id=animal.id) }}" method="post" style="display:inline;" onsubmit="return confirm('Remover este animal?');">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn danger small">Excluir</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="empty-state">Nenhum animal cadastrado ainda.</p>
+    {% endif %}
+</div>
+{% endblock %}

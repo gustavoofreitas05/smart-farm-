@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+{% block title %}Novo cultivo - Smart Farm{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Novo cultivo</h1>
+</div>
+
+<div class="card form-card">
+    <form method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="field">
+            <label for="name">Nome</label>
+            <input type="text" id="name" name="name" placeholder="Banana, Mandioca, Milho, Horta..." required>
+        </div>
+        <div class="field">
+            <label for="area">Área / localização</label>
+            <input type="text" id="area" name="area" placeholder="Fundo do terreno, 200 m²...">
+        </div>
+        <div class="field-row">
+            <div class="field">
+                <label for="planting_date">Data de plantio</label>
+                <input type="date" id="planting_date" name="planting_date">
+            </div>
+            <div class="field">
+                <label for="expected_harvest">Previsão de colheita</label>
+                <input type="date" id="expected_harvest" name="expected_harvest">
+            </div>
+        </div>
+        <div class="field">
+            <label for="status">Status</label>
+            <select id="status" name="status">
+                {% for s in statuses %}
+                <option value="{{ s }}" {{ 'selected' if s == 'ativo' }}>{{ s | capitalize }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="field">
+            <label for="notes">Observações</label>
+            <textarea id="notes" name="notes" rows="3"></textarea>
+        </div>
+        <button type="submit" class="btn">Salvar</button>
+        <a href="{{ url_for('crops_index') }}" class="btn secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

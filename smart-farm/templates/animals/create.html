@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+{% block title %}Novo animal - Smart Farm{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Novo animal</h1>
+</div>
+
+<div class="card form-card">
+    <form method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="field">
+            <label for="name">Nome / identificação</label>
+            <input type="text" id="name" name="name" value="{{ form.get('name', '') }}" required>
+        </div>
+        <div class="field-row">
+            <div class="field">
+                <label for="species">Espécie</label>
+                <input type="text" id="species" name="species" placeholder="Galinha, Cachorro, Coelho..." value="{{ form.get('species', '') }}" required>
+            </div>
+            <div class="field">
+                <label for="breed">Raça</label>
+                <input type="text" id="breed" name="breed" value="{{ form.get('breed', '') }}">
+            </div>
+        </div>
+        <div class="field-row">
+            <div class="field">
+                <label for="sex">Sexo</label>
+                <select id="sex" name="sex">
+                    <option value="">—</option>
+                    <option value="Macho" {{ 'selected' if form.get('sex') == 'Macho' }}>Macho</option>
+                    <option value="Fêmea" {{ 'selected' if form.get('sex') == 'Fêmea' }}>Fêmea</option>
+                </select>
+            </div>
+            <div class="field">
+                <label for="quantity">Quantidade</label>
+                <input type="number" id="quantity" name="quantity" min="1" value="{{ form.get('quantity', '1') }}" required>
+            </div>
+        </div>
+        <div class="field">
+            <label for="birth_date">Data de nascimento</label>
+            <input type="date" id="birth_date" name="birth_date" value="{{ form.get('birth_date', '') }}" max="{{ today }}">
+        </div>
+        <div class="field">
+            <label for="notes">Observações</label>
+            <textarea id="notes" name="notes" rows="3">{{ form.get('notes', '') }}</textarea>
+        </div>
+        <button type="submit" class="btn">Salvar</button>
+        <a href="{{ url_for('animals_index') }}" class="btn secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% block title %}Produção - Smart Farm{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Produção</h1>
+    <a href="{{ url_for('production_create') }}" class="btn">+ Registrar produção</a>
+</div>
+
+<div class="card">
+    {% if records %}
+    <table>
+        <thead>
+            <tr><th>Data</th><th>Tipo</th><th>Quantidade</th><th>Origem</th><th></th></tr>
+        </thead>
+        <tbody>
+            {% for r in records %}
+            <tr>
+                <td>{{ r.production_date }}</td>
+                <td>{{ r.type }}</td>
+                <td>{{ r.quantity }} {{ r.unit }}</td>
+                <td>{{ r.animal_name or '—' }}</td>
+                <td>
+                    <a href="{{ url_for('production_edit', record_id=r.id) }}" class="btn secondary small">Editar</a>
+                    <form action="{{ url_for('production_delete', record_id=r.id) }}" method="post" style="display:inline;" onsubmit="return confirm('Remover este registro?');">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn danger small">Excluir</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="empty-state">Nenhuma produção registrada ainda.</p>
+    {% endif %}
+</div>
+{% endblock %}

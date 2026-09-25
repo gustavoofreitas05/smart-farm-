@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+{% block title %}Erro interno - Smart Farm{% endblock %}
+{% block content %}
+<div class="card empty-state">
+    <h2>Ops, algo deu errado</h2>
+    <p>Ocorreu um erro inesperado no servidor. Tente novamente em instantes.</p>
+    <a href="{{ url_for('index') }}" class="btn">Voltar ao dashboard</a>
+</div>
+{% endblock %}

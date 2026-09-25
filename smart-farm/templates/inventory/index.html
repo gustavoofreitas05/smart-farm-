@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+{% block title %}Estoque - Smart Farm{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Estoque</h1>
+    <a href="{{ url_for('inventory_create') }}" class="btn">+ Novo item</a>
+</div>
+
+<div class="card">
+    {% if items %}
+    <table>
+        <thead>
+            <tr><th>Item</th><th>Categoria</th><th>Quantidade</th><th>Mínimo</th><th>Status</th><th>Atualizar</th><th></th></tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.category or '—' }}</td>
+                <td>{{ item.quantity }} {{ item.unit }}</td>
+                <td>{{ item.minimum_quantity }} {{ item.unit }}</td>
+                <td>
+                    {% if item.quantity <= item.minimum_quantity %}
+                    <span class="tag warn">⚠ Baixo</span>
+                    {% else %}
+                    <span class="tag">OK</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <form action="{{ url_for('inventory_update', item_id=item.id) }}" method="post" style="display:flex; gap:6px;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="number" step="0.01" name="quantity" value="{{ item.quantity }}" style="width:90px; padding:5px 8px; border:1px solid var(--line); border-radius:8px;">
+                        <button type="submit" class="btn secondary small">Salvar</button>
+                    </form>
+                </td>
+                <td>
+                    <form action="{{ url_for('inventory_delete', item_id=item.id) }}" method="post" onsubmit="return confirm('Remover este item?');">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn danger small">Excluir</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="empty-state">Nenhum item de estoque cadastrado ainda.</p>
+    {% endif %}
+</div>
+{% endblock %}

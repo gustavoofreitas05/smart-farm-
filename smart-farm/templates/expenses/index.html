@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+{% block title %}Despesas - Smart Farm{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Despesas</h1>
+    <a href="{{ url_for('expenses_create') }}" class="btn">+ Nova despesa</a>
+</div>
+
+<div class="card">
+    {% if records %}
+    <table>
+        <thead>
+            <tr><th>Data</th><th>Categoria</th><th>Descrição</th><th style="text-align:right;">Valor</th><th></th></tr>
+        </thead>
+        <tbody>
+            {% for r in records %}
+            <tr>
+                <td>{{ r.expense_date }}</td>
+                <td><span class="tag">{{ r.category }}</span></td>
+                <td>{{ r.description or '—' }}</td>
+                <td style="text-align:right;">{{ r.amount | brl }}</td>
+                <td>
+                    <a href="{{ url_for('expenses_edit', record_id=r.id) }}" class="btn secondary small">Editar</a>
+                    <form action="{{ url_for('expenses_delete', record_id=r.id) }}" method="post" style="display:inline;" onsubmit="return confirm('Remover esta despesa?');">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn danger small">Excluir</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3" style="text-align:right; font-weight:600;">Total</td>
+                <td style="text-align:right; font-weight:700;">{{ total | brl }}</td>
+                <td></td>
+            </tr>
+        </tfoot>
+    </table>
+    {% else %}
+    <p class="empty-state">Nenhuma despesa registrada ainda.</p>
+    {% endif %}
+</div>
+{% endblock %}

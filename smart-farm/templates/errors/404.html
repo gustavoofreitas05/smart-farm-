@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+{% block title %}Página não encontrada - Smart Farm{% endblock %}
+{% block content %}
+<div class="card empty-state">
+    <h2>404 — Não encontramos essa página</h2>
+    <p>O registro pode ter sido removido, ou o link está incorreto.</p>
+    <a href="{{ url_for('index') }}" class="btn">Voltar ao dashboard</a>
+</div>
+{% endblock %}

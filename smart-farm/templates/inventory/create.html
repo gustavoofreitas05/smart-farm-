@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% block title %}Novo item de estoque - Smart Farm{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Novo item de estoque</h1>
+</div>
+
+<div class="card form-card">
+    <form method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="field">
+            <label for="name">Nome do item</label>
+            <input type="text" id="name" name="name" placeholder="Ração, Milho, Calcário..." required>
+        </div>
+        <div class="field">
+            <label for="category">Categoria</label>
+            <input type="text" id="category" name="category" placeholder="Alimentação, Saúde, Manutenção...">
+        </div>
+        <div class="field-row">
+            <div class="field">
+                <label for="quantity">Quantidade atual</label>
+                <input type="number" step="0.01" id="quantity" name="quantity" value="0" required>
+            </div>
+            <div class="field">
+                <label for="unit">Unidade</label>
+                <input type="text" id="unit" name="unit" placeholder="kg, litros, un." required>
+            </div>
+        </div>
+        <div class="field">
+            <label for="minimum_quantity">Quantidade mínima (alerta)</label>
+            <input type="number" step="0.01" id="minimum_quantity" name="minimum_quantity" value="0" required>
+        </div>
+        <button type="submit" class="btn">Salvar</button>
+        <a href="{{ url_for('inventory_index') }}" class="btn secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

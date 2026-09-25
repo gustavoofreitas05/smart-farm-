@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% block title %}Cultivos - Smart Farm{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Cultivos</h1>
+    <a href="{{ url_for('crops_create') }}" class="btn">+ Novo cultivo</a>
+</div>
+
+<div class="card">
+    {% if crops %}
+    <table>
+        <thead>
+            <tr><th>Nome</th><th>Área</th><th>Plantio</th><th>Previsão de colheita</th><th>Status</th><th></th></tr>
+        </thead>
+        <tbody>
+            {% for crop in crops %}
+            <tr>
+                <td>{{ crop.name }}</td>
+                <td>{{ crop.area or '—' }}</td>
+                <td>{{ crop.planting_date or '—' }}</td>
+                <td>{{ crop.expected_harvest or '—' }}</td>
+                <td>
+                    {% if crop.status == 'ativo' %}
+                    <span class="tag">🌱 Ativo</span>
+                    {% elif crop.status == 'colhido' %}
+                    <span class="tag">🌾 Colhido</span>
+                    {% else %}
+                    <span class="tag warn">Perdido</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{{ url_for('crops_edit', crop_id=crop.id) }}" class="btn secondary small">Editar</a>
+                    <form action="{{ url_for('crops_delete', crop_id=crop.id) }}" method="post" style="display:inline;" onsubmit="return confirm('Remover este cultivo?');">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn danger small">Excluir</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="empty-state">Nenhum cultivo cadastrado ainda.</p>
+    {% endif %}
+</div>
+{% endblock %}
