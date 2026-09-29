@@ -326,9 +326,5 @@ Licença
 
 Este projeto foi desenvolvido para fins educacionais como parte do CS50x.
 
-
-**Antes de enviar ao CS50**, só falta substituir:
-
-
 **Vídeo de demonstração:**  
-<!-- Adicione aqui o link do vídeo antes da submissão -->
+https://youtu.be/6HcpSyqPQeM
