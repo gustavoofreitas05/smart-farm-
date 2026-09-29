@@ -153,6 +153,10 @@ a:hover { text-decoration: underline; }
 .stat-card .label { font-size: 0.8rem; color: #6B6552; margin-bottom: 6px; }
 .stat-card .value { font-family: 'Fraunces', serif; font-size: 1.6rem; font-weight: 600; }
 
+.expense-change { font-size: 0.78rem; margin-top: 4px; }
+.expense-up { color: var(--danger); }
+.expense-down { color: var(--leaf-dark); }
+
 .two-col {
     display: grid;
     grid-template-columns: 1.3fr 1fr;

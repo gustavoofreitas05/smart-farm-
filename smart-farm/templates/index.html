@@ -19,7 +19,7 @@
         <div class="label">Gastos este mês</div>
         <div class="value">{{ expenses_month | brl }}</div>
         {% if expenses_change_pct is not none %}
-        <div style="font-size:0.78rem; margin-top:4px; color: {{ '#A6432F' if expenses_change_pct > 0 else '#2E5039' }};">
+        <div class="expense-change {{ 'expense-up' if expenses_change_pct > 0 else 'expense-down' }}">
             {{ '▲' if expenses_change_pct > 0 else '▼' }} {{ expenses_change_pct | abs }}% vs. mês anterior
         </div>
         {% endif %}
@@ -37,7 +37,9 @@
 <div class="two-col">
     <div class="card">
         <h3>Produção nos últimos 7 dias</h3>
-        <canvas id="productionChart" height="130"></canvas>
+        <canvas id="productionChart" height="130"
+            data-labels='{{ chart_labels | tojson }}'
+            data-values='{{ chart_values | tojson }}'></canvas>
     </div>
     <div class="card">
         <h3>Gastos por categoria (mês)</h3>
@@ -61,12 +63,16 @@
 <div class="two-col">
     <div class="card">
         <h3>Gastos nos últimos 6 meses</h3>
-        <canvas id="expenseTrendChart" height="130"></canvas>
+        <canvas id="expenseTrendChart" height="130"
+            data-labels='{{ expense_trend_labels | tojson }}'
+            data-values='{{ expense_trend_values | tojson }}'></canvas>
     </div>
     <div class="card">
         <h3>O que a fazenda mais produziu (30 dias)</h3>
         {% if production_by_type %}
-        <canvas id="productionByTypeChart" height="130"></canvas>
+        <canvas id="productionByTypeChart" height="130"
+            data-labels='{{ production_by_type | map(attribute="type") | list | tojson }}'
+            data-values='{{ production_by_type | map(attribute="total") | list | tojson }}'></canvas>
         {% else %}
         <p class="empty-state">Nenhuma produção registrada nos últimos 30 dias.</p>
         {% endif %}
@@ -117,15 +123,23 @@
     </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <script>
+    function chartData(canvas) {
+        return {
+            labels: JSON.parse(canvas.dataset.labels),
+            values: JSON.parse(canvas.dataset.values)
+        };
+    }
+
+    const productionData = chartData(document.getElementById('productionChart'));
     new Chart(document.getElementById('productionChart'), {
         type: 'line',
         data: {
-            labels: {{ chart_labels | tojson }},
+            labels: productionData.labels,
             datasets: [{
                 label: 'Produção',
-                data: {{ chart_values | tojson }},
+                data: productionData.values,
                 borderColor: '#3F6C4F',
                 backgroundColor: 'rgba(63, 108, 79, 0.15)',
                 tension: 0.35,
@@ -139,13 +153,14 @@
         }
     });
 
+    const expenseTrendData = chartData(document.getElementById('expenseTrendChart'));
     new Chart(document.getElementById('expenseTrendChart'), {
         type: 'bar',
         data: {
-            labels: {{ expense_trend_labels | tojson }},
+            labels: expenseTrendData.labels,
             datasets: [{
                 label: 'Gastos',
-                data: {{ expense_trend_values | tojson }},
+                data: expenseTrendData.values,
                 backgroundColor: '#8B5E3C',
                 borderRadius: 4
             }]
@@ -156,14 +171,16 @@
         }
     });
 
-    {% if production_by_type %}
-    new Chart(document.getElementById('productionByTypeChart'), {
+    const productionByTypeCanvas = document.getElementById('productionByTypeChart');
+    if (productionByTypeCanvas) {
+        const productionByTypeData = chartData(productionByTypeCanvas);
+        new Chart(productionByTypeCanvas, {
         type: 'bar',
         data: {
-            labels: {{ production_by_type | map(attribute='type') | list | tojson }},
+            labels: productionByTypeData.labels,
             datasets: [{
                 label: 'Quantidade',
-                data: {{ production_by_type | map(attribute='total') | list | tojson }},
+                data: productionByTypeData.values,
                 backgroundColor: '#C99A3E',
                 borderRadius: 4
             }]
@@ -173,7 +190,7 @@
             plugins: { legend: { display: false } },
             scales: { x: { beginAtZero: true } }
         }
-    });
-    {% endif %}
+        });
+    }
 </script>
 {% endblock %}
