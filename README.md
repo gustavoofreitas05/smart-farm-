@@ -1,7 +1,7 @@
 # 🌱 Smart Farm
 
 **Vídeo de demonstração:**  
-<!-- Adicione aqui o link do vídeo antes da submissão -->
+(https://youtu.be/6HcpSyqPQeM)
 
 ## Descrição
 
